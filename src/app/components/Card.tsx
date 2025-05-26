@@ -23,7 +23,11 @@ export const Card: React.FC<JobCardProps> = ({ job, user_id }) => {
       </div>
 
       {displayModal && (
-        <Modal job={job} user_id={user_id} onClose={() => setDisplayModal(false)} />
+        <Modal
+          job={job}
+          user_id={user_id}
+          onClose={() => setDisplayModal(false)}
+        />
       )}
     </div>
   );
