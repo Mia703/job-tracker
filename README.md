@@ -19,3 +19,7 @@ A Khanban-based job tracker.
 Used UserContext to pass logged in user information to other pages and components, however, useContext is **in-memory only**, meaning the context doesn't persist across page refreshes. To ensure the user auth persists first get the user credentials and save to sessionstorage, then get from sessionstorage and save to UserContext.
 
 `field-sizing: fixed` or `field-sizing: content` allows a textarea to resize based on the content inside the textarea or stay a fixed size.
+
+DnD Kit Quick Start: https://docs.dndkit.com/introduction/getting-started
+
+DnD Kit Tutorial: https://www.youtube.com/watch?v=DVqVQwg_6_4&list=PLDP6TvgDVbW1fI3EXn8eYafy5Kp4xGkBu

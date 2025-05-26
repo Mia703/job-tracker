@@ -1,39 +1,39 @@
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { getJobsByStatus } from "../utils/tasks";
-import { Job as JobType } from "../types/Job";
+import React, { useState } from "react";
 import { Card as JobCard } from "./Card";
 import { Modal } from "./Modal";
+import { Job as JobType } from "../types/Job";
+import { useDroppable } from "@dnd-kit/core";
 
 interface ColumnProps {
   user_id: string;
   title: string;
   slug: string;
+  jobs: JobType[];
 }
 
-export const Column: React.FC<ColumnProps> = ({ user_id, title, slug }) => {
-  const [jobsList, setJobsList] = useState<JobType[]>([]);
+export const Column: React.FC<ColumnProps> = ({
+  user_id,
+  title,
+  slug,
+  jobs,
+}) => {
   const [displayModal, setDisplayModal] = useState<boolean>(false);
 
-  useEffect(() => {
-    async function fetchTasks() {
-      const data = await getJobsByStatus(user_id, slug);
-
-      if (data) {
-        const jobs = JSON.parse(data) as JobType[];
-        setJobsList(jobs);
-      }
-    }
-    fetchTasks();
-  }, [slug, user_id]);
+  const { setNodeRef } = useDroppable({
+    id: slug,
+  });
 
   return (
-    <div className="column col-span-4 w-full rounded-md border-2 bg-white p-2 shadow-md md:col-span-1">
+    <div
+      ref={setNodeRef}
+      className="column col-span-4 w-full rounded-md border-2 bg-white p-2 shadow-md md:col-span-1"
+    >
       <div className="col-header">
         <div className="content-wrapper text-center">
           <h2 className="col-header font-bold capitalize">{title}</h2>
-          <small className="totals"># Jobs</small>
+          <small className="totals">{jobs.length} Jobs</small>
         </div>
         <div className="button-wrapper">
           <Button
@@ -47,15 +47,11 @@ export const Column: React.FC<ColumnProps> = ({ user_id, title, slug }) => {
         </div>
       </div>
 
-      {jobsList ? (
-        <div className="col-body card-wrapper">
-          {jobsList.map((job, index) => {
-            return <JobCard job={job} user_id={user_id} key={index} />;
-          })}
-        </div>
-      ) : (
-        <div></div>
-      )}
+      <div className="col-body card-wrapper">
+        {jobs.map((job, index) => {
+          return <JobCard job={job} user_id={user_id} key={index} />;
+        })}
+      </div>
 
       {displayModal && (
         <Modal

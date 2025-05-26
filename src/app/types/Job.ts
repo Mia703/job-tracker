@@ -12,3 +12,5 @@ export interface Job {
   job_offer_received_date: string;
   job_offer_accepted_date: string;
 }
+
+// excludes user id

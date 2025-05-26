@@ -5,25 +5,24 @@ const xata = getXataClient();
 
 export async function POST(request: Request) {
   try {
-    const { user_id, status } = await request.json();
+    const { user_id } = await request.json();
 
-    if (!user_id || !status) {
+    if (!user_id) {
       return NextResponse.json(
-        { message: { message: "getJobs: User id and status are required" } },
+        { message: { message: "getJobs: User id is required" } },
         { status: 400 },
       );
     }
 
     const jobs = await xata.db.Jobs.filter({
       "user.id": user_id,
-      job_status: status,
     }).getAll();
 
     if (!jobs) {
       return NextResponse.json(
         {
           message: {
-            message: `getJobs: Could not get jobs with the status:${status} for user_id:${user_id}`,
+            message: `getJobs: Could not get jobs for user_id:${user_id}`,
           },
         },
         { status: 404 },
@@ -32,7 +31,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           message: {
-            message: `getJobs: No jobs with status:${status} for user_id:${user_id}`,
+            message: `getJobs: No jobs for user_id:${user_id}`,
           },
           jobs: "",
         },
@@ -42,7 +41,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           message: {
-            message: `getJobs: Jobs with status: ${status} for user_id: ${user_id} is successful`,
+            message: `getJobs: Got jobs for user_id: ${user_id} is successful`,
             jobs: JSON.stringify(jobs),
           },
         },
@@ -50,7 +49,7 @@ export async function POST(request: Request) {
       );
     }
   } catch (error) {
-    console.error("jobs: Internal server error", error);
+    console.error("getJobs: Internal server error", error);
     return NextResponse.json(
       { message: { message: "getJobs: Internal server error" } },
       { status: 500 },
