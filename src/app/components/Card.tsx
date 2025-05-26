@@ -26,15 +26,15 @@ export const Card: React.FC<JobCardProps> = ({ job, user_id }) => {
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      className="job-card-wrapper my-2 cursor-grab rounded-sm border-2 bg-white p-2"
+      className="job-card-wrapper my-2 rounded-sm border-2 bg-white p-2"
       style={style}
+      // FIXME: how do I toggle the modal to open, it think every time I click it's considered a drag event
+      onClick={() => {
+        setDisplayModal(true);
+        console.log('set modal true')
+      }}
     >
-      <div
-        className="job-card"
-        onClick={() => {
-          setDisplayModal(true);
-        }}
-      >
+      <div className="job-card">
         <h3 className="font-semibold capitalize">{job.job_name}</h3>
         <small>{job.job_company}</small>
       </div>

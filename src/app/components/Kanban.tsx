@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { Column } from "./Column";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { Job as JobType } from "../types/Job";
-import { getJobsByUser } from "../utils/tasks";
+import { getJobsByUser, updateJobStatus } from "../utils/tasks";
 
 interface KanbanProps {
   user: User;
@@ -16,7 +16,7 @@ interface KanbanProps {
 export const Kanban: React.FC<KanbanProps> = ({ user }) => {
   const { setUser } = useUser();
   const [jobsList, setJobsList] = useState<JobType[]>([]);
-  const [draggedJob, setDraggedJob] = useState<string>("");
+  const [draggedJob, setDraggedJob] = useState<JobType | null>(null);
   const router = useRouter();
 
   function handleDragEnd(event: DragEndEvent) {
@@ -27,11 +27,21 @@ export const Kanban: React.FC<KanbanProps> = ({ user }) => {
     // 'active' is the draggable job card
     // saves the id of the dragged card
     const dragged_job_id = active.id as string;
-    setDraggedJob(dragged_job_id); // save job id to update db
 
     // 'over' is the droppable column
     // saves the col slug or 'job_status' the card was dropped over
     const new_job_status = over.id as JobType["job_status"];
+
+    // find the dragged job from the jobs list
+    // update it's status and save it
+    const dragged = jobsList.find((job) => job.id == dragged_job_id);
+    if (dragged) {
+      dragged.job_status = new_job_status;
+      setDraggedJob(dragged);
+    }
+    else {
+      setDraggedJob(null);
+    }
 
     // the update to the list is asynchronous, use useEffect to see changes
     setJobsList(() =>
@@ -43,10 +53,17 @@ export const Kanban: React.FC<KanbanProps> = ({ user }) => {
 
   // every time a job is moved update the db
   useEffect(() => {
-    const found = jobsList.find((job) => job.id == draggedJob);
-    console.log("dragged job", found)
-    // TODO: create fetch function to update db
-  }, [draggedJob, jobsList]);
+    async function updateDraggedJob()  {
+      if (draggedJob) {
+        // only returns error message, else null
+        const data = await updateJobStatus(draggedJob.id, draggedJob.job_status);
+        if (data) {
+          console.error('updatedDraggedJobStatus', data);
+        }
+      }
+    }
+    updateDraggedJob();
+  }, [draggedJob]);
 
   // gets all jobs related to user id
   useEffect(() => {
