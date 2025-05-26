@@ -1,0 +1,18 @@
+{
+  "id": "mig_d0p24pqunsp1bris8cgg",
+  "parentID": "mig_d0p247aunsp1bris8cc0",
+  "checksum": "1:4e6e7a0c54ecff5d051b0dac7bff5f1db9c178f21cb136dd0d28c8ccdedba8b5",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "job_application_date",
+          "type": "text",
+          "notNull": true,
+          "defaultValue": "empty"
+        },
+        "table": "Jobs"
+      }
+    }
+  ]
+}

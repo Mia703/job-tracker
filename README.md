@@ -1,36 +1,21 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# Job Tracker
 
-First, run the development server:
+A Khanban-based job tracker.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Dependencies
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Front-end: React.js v19
+- Back-end: Next.js + Typescript + TailwindCSS v15
+    - Form Validation: Formik.org v2.4.6
+- Database: Xata.io Lite v0.30.1
+- UI: ShadCDN (installed using `--legacy-peer-deps` because of React v19)
+    - Reference: https://ui.shadcn.com/docs/react-19
+    - Icons: Lucide for React v0.511.0
+- Other Dependencies:
+    - Tailwind Prettier Plugin v0.6.11
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Used UserContext to pass logged in user information to other pages and components, however, useContext is **in-memory only**, meaning the context doesn't persist across page refreshes. To ensure the user auth persists first get the user credentials and save to sessionstorage, then get from sessionstorage and save to UserContext.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`field-sizing: fixed` or `field-sizing: content` allows a textarea to resize based on the content inside the textarea or stay a fixed size.

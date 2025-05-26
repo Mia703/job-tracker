@@ -1,0 +1,18 @@
+{
+  "id": "mig_d0p252qdo80pli9qprkg",
+  "parentID": "mig_d0p24tiunsp1bris8chg",
+  "checksum": "1:35afa075241b26dda39719ad967511c89ad359c4e842e95cdd72505590f3606c",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "job_offer_received_date",
+          "type": "text",
+          "notNull": true,
+          "defaultValue": "empty"
+        },
+        "table": "Jobs"
+      }
+    }
+  ]
+}

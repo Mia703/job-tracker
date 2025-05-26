@@ -1,0 +1,14 @@
+{
+  "id": "mig_d0p2pj2do80pli9qprog",
+  "parentID": "mig_d0p2d6qr9e9qaqkp39q0",
+  "checksum": "1:d84445def1dd822804ed1b3868100f26526fd19c635f8718b846f4ec6ad3ccee",
+  "operations": [
+    {
+      "renameColumn": {
+        "newName": "user",
+        "oldName": "user_id",
+        "table": "Jobs"
+      }
+    }
+  ]
+}

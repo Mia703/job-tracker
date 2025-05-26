@@ -1,0 +1,18 @@
+{
+  "id": "mig_d0p247aunsp1bris8cc0",
+  "parentID": "mig_d0p241qdo80pli9qprjg",
+  "checksum": "1:235a2a57265e55b6a20f88cdc5202b5759a263c57e036c82ec102de49a1667c6",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "job_desc",
+          "type": "text",
+          "notNull": true,
+          "defaultValue": "empty"
+        },
+        "table": "Jobs"
+      }
+    }
+  ]
+}

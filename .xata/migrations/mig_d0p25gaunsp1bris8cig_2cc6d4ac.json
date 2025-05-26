@@ -1,0 +1,19 @@
+{
+  "id": "mig_d0p25gaunsp1bris8cig",
+  "parentID": "mig_d0p257ido80pli9qprlg",
+  "checksum": "1:2cc6d4ac7945e3295b96be2fcfc472bc7ccd856796d94e755097ce7a52765b5d",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "user_id",
+          "type": "link",
+          "link": {
+            "table": "Users"
+          }
+        },
+        "table": "Jobs"
+      }
+    }
+  ]
+}

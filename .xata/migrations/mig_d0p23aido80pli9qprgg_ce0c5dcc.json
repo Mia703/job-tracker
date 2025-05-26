@@ -1,0 +1,18 @@
+{
+  "id": "mig_d0p23aido80pli9qprgg",
+  "parentID": "mig_d0p22nar9e9qaqkp39m0",
+  "checksum": "1:ce0c5dcc255f1c1490121e0c8b931457df44957d7ee9f0c62fd6397cb5700498",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "job_name",
+          "type": "text",
+          "notNull": true,
+          "defaultValue": "empty"
+        },
+        "table": "Jobs"
+      }
+    }
+  ]
+}

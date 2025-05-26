@@ -1,0 +1,18 @@
+{
+  "id": "mig_d0p24tiunsp1bris8chg",
+  "parentID": "mig_d0p24pqunsp1bris8cgg",
+  "checksum": "1:1ba3b9c378bd2f70c408b01bd15e0d7a64a5beba1e6a17d42611a198fcf22a09",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "job_interview_date",
+          "type": "text",
+          "notNull": true,
+          "defaultValue": "empty"
+        },
+        "table": "Jobs"
+      }
+    }
+  ]
+}

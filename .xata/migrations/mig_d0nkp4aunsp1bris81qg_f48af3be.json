@@ -1,0 +1,18 @@
+{
+  "id": "mig_d0nkp4aunsp1bris81qg",
+  "parentID": "mig_d0nkoqaunsp1bris81pg",
+  "checksum": "1:f48af3be4aad2531959b1d09708ac2ac257588e2b916be0a9f918041fc29e67a",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "email",
+          "type": "text",
+          "notNull": true,
+          "defaultValue": "empty"
+        },
+        "table": "Users"
+      }
+    }
+  ]
+}

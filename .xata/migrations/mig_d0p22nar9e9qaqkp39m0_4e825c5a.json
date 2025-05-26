@@ -1,0 +1,12 @@
+{
+  "id": "mig_d0p22nar9e9qaqkp39m0",
+  "parentID": "mig_d0nkphqunsp1bris81rg",
+  "checksum": "1:4e825c5ab4f4664f6263e55b15a50f56eef974f2e55df206bc794003b19e99cc",
+  "operations": [
+    {
+      "addTable": {
+        "table": "Jobs"
+      }
+    }
+  ]
+}
