@@ -23,3 +23,10 @@ Used UserContext to pass logged in user information to other pages and component
 DnD Kit Quick Start: https://docs.dndkit.com/introduction/getting-started
 
 DnD Kit Tutorial: https://www.youtube.com/watch?v=DVqVQwg_6_4&list=PLDP6TvgDVbW1fI3EXn8eYafy5Kp4xGkBu
+
+
+Wrapping the entire job card in the DnD draggable attributes makes it hard to distinguish between an actual click vs a drag. So, instead of making the entire card draggable, make only a part of the card draggable. In this case it's the grip icon.
+
+The modal is reused for both the plus button and when clicking on a job card. However, for some reason the toggle `displayModal` wasn't alternating, instead just `!displayModal` to keep accurate. Plus moved the onclick function from the job-wrapper to the actual job card. Because what was happening is that all clicks when the modal was open were toggling the opening or closing of the modal. 
+
+Formik `enableReinitialize: true` tells Formik to reset its internal state whenever `initialValues` changes.

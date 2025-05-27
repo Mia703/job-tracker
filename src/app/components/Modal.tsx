@@ -15,20 +15,22 @@ interface ModalProps {
 
 export const Modal: React.FC<ModalProps> = ({ job, user_id, onClose }) => {
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
-      name: "",
-      company: "",
-      salary: "",
-      postURL: "",
-      location: "",
-      applicationDate: "",
-      interviewDate: "",
-      offerReceivedDate: "",
-      offerAcceptedDate: "",
-      description: "",
+      name: job?.job_name == "empty" ? "" : job?.job_name,
+      company: job?.job_company == "empty" ? "" : job?.job_company,
+      salary: job?.job_salary == "0" ? "" : job?.job_salary,
+      postURL: job?.job_post_url == "empty" ? "" : job?.job_post_url,
+      location: job?.job_location == "empty" ? "" : job?.job_location,
+      applicationDate: job?.job_application_date == "empty" ? "" : job?.job_application_date,
+      interviewDate: job?.job_interview_date == "empty" ? "" : job?.job_interview_date,
+      offerReceivedDate: job?.job_offer_received_date == "empty" ? "" : job?.job_offer_received_date,
+      offerAcceptedDate: job?.job_offer_accepted_date == "empty" ? "" : job?.job_offer_accepted_date,
+      description: job?.job_desc == "empty" ? "" : job?.job_desc,
     },
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       console.log(values);
+      // TODO: tasks.ts -> update job -> api/setJobs/updateJob
     },
   });
 
@@ -53,7 +55,9 @@ export const Modal: React.FC<ModalProps> = ({ job, user_id, onClose }) => {
                   />
                 </div>
 
-                <Button onClick={onClose}>Close</Button>
+                <Button type="button" onClick={onClose}>
+                  Close
+                </Button>
               </div>
 
               <div className="wrapper grid grid-cols-2 gap-4">
@@ -190,12 +194,7 @@ export const Modal: React.FC<ModalProps> = ({ job, user_id, onClose }) => {
               </div>
 
               <div className="button-wrapper mt-6 grid grid-cols-2 gap-2">
-                <Button
-                  type="submit"
-                  id="update-btn"
-                  name="buttonType"
-                  className="w-full"
-                >
+                <Button type="submit" id="update-btn" className="w-full">
                   Update
                 </Button>
                 <Button
@@ -203,6 +202,10 @@ export const Modal: React.FC<ModalProps> = ({ job, user_id, onClose }) => {
                   variant={"destructive"}
                   id="del-btn"
                   className="w-full"
+                  onClick={() => {
+                    // TODO: delete job -> task.ts
+                    console.log(`delete the job with id:${job?.id}`)
+                  }}
                 >
                   Delete
                 </Button>

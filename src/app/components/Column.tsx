@@ -39,7 +39,7 @@ export const Column: React.FC<ColumnProps> = ({
           <Button
             className="my-2 w-full"
             onClick={() => {
-              setDisplayModal(true);
+              setDisplayModal(!displayModal);
             }}
           >
             <Plus className="h-4 w-4 text-white" />
@@ -57,7 +57,7 @@ export const Column: React.FC<ColumnProps> = ({
         <Modal
           job={null}
           user_id={user_id}
-          onClose={() => setDisplayModal(false)}
+          onClose={() => setDisplayModal(!displayModal)}
         />
       )}
     </div>

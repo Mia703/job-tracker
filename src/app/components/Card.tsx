@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Job as JobType } from "../types/Job";
 import { Modal } from "./Modal";
 import { useDraggable } from "@dnd-kit/core";
+import { GripVertical } from "lucide-react";
 
 interface JobCardProps {
   job: JobType;
@@ -23,18 +24,23 @@ export const Card: React.FC<JobCardProps> = ({ job, user_id }) => {
 
   return (
     <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
       className="job-card-wrapper my-2 rounded-sm border-2 bg-white p-2"
       style={style}
-      // FIXME: how do I toggle the modal to open, it think every time I click it's considered a drag event
-      onClick={() => {
-        setDisplayModal(true);
-        console.log('set modal true')
-      }}
     >
-      <div className="job-card">
+      <div
+        className="job-card cursor-pointer"
+        onClick={() => {
+          setDisplayModal(!displayModal);
+        }}
+      >
+        <div
+          className="grip-wrapper flex w-full cursor-pointer flex-row justify-end"
+          ref={setNodeRef}
+          {...listeners}
+          {...attributes}
+        >
+          <GripVertical className="h-4 w-4 cursor-grab" />
+        </div>
         <h3 className="font-semibold capitalize">{job.job_name}</h3>
         <small>{job.job_company}</small>
       </div>
@@ -43,7 +49,7 @@ export const Card: React.FC<JobCardProps> = ({ job, user_id }) => {
         <Modal
           job={job}
           user_id={user_id}
-          onClose={() => setDisplayModal(false)}
+          onClose={() => setDisplayModal(!displayModal)}
         />
       )}
     </div>
