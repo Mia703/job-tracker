@@ -1,32 +1,138 @@
-
 # Job Tracker
 
-A Khanban-based job tracker.
-
+A Kanban-based job tracking app that helps users manage job applications across various stages.
 
 ## Dependencies
 
-- Front-end: React.js v19
-- Back-end: Next.js + Typescript + TailwindCSS v15
-    - Form Validation: Formik.org v2.4.6
-- Database: Xata.io Lite v0.30.1
-- UI: ShadCDN (installed using `--legacy-peer-deps` because of React v19)
-    - Reference: https://ui.shadcn.com/docs/react-19
-    - Icons: Lucide for React v0.511.0
-- Other Dependencies:
-    - Tailwind Prettier Plugin v0.6.11
+### Front-end
 
-Used UserContext to pass logged in user information to other pages and components, however, useContext is **in-memory only**, meaning the context doesn't persist across page refreshes. To ensure the user auth persists first get the user credentials and save to sessionstorage, then get from sessionstorage and save to UserContext.
+- **React.js** v19
+- **ShadCDN UI Library**
 
-`field-sizing: fixed` or `field-sizing: content` allows a textarea to resize based on the content inside the textarea or stay a fixed size.
+  - Installed using `--legacy-peer-deps` for React 19 compatibility
+  - Icons: Lucide for React v0.511.0
+  - Docs: [shadcn.com for React 19](https://ui.shadcn.com/docs/react-19)
 
-DnD Kit Quick Start: https://docs.dndkit.com/introduction/getting-started
+### Back-end
 
-DnD Kit Tutorial: https://www.youtube.com/watch?v=DVqVQwg_6_4&list=PLDP6TvgDVbW1fI3EXn8eYafy5Kp4xGkBu
+- **Next.js** (App Router) with **TypeScript**
+- **TailwindCSS** v15
 
+  - Tailwind Prettier Plugin: v0.6.11
 
-Wrapping the entire job card in the DnD draggable attributes makes it hard to distinguish between an actual click vs a drag. So, instead of making the entire card draggable, make only a part of the card draggable. In this case it's the grip icon.
+### Database
 
-The modal is reused for both the plus button and when clicking on a job card. However, for some reason the toggle `displayModal` wasn't alternating, instead just `!displayModal` to keep accurate. Plus moved the onclick function from the job-wrapper to the actual job card. Because what was happening is that all clicks when the modal was open were toggling the opening or closing of the modal. 
+- **Xata.io Lite** v0.30.1
 
-Formik `enableReinitialize: true` tells Formik to reset its internal state whenever `initialValues` changes.
+### Form Handling
+
+- **Formik.org** v2.4.6
+
+  - `enableReinitialize: true` is set to allow Formik to refresh when `initialValues` change
+
+---
+
+## Key Architecture Notes
+
+### State Management
+
+- Used `UserContext` to share user info globally across pages and components.
+- Context is **in-memory only** and does not persist on refresh.
+- Workaround: Save user credentials to `sessionStorage` and retrieve on mount to persist authentication.
+
+### Drag and Drop
+
+- **DnD Kit** is used for drag & drop functionality.
+
+  - Docs: [https://docs.dndkit.com/introduction/getting-started](https://docs.dndkit.com/introduction/getting-started)
+  - YouTube Tutorial: [https://www.youtube.com/watch?v=DVqVQwg_6_4\&list=PLDP6TvgDVbW1fI3EXn8eYafy5Kp4xGkBu](https://www.youtube.com/watch?v=DVqVQwg_6_4&list=PLDP6TvgDVbW1fI3EXn8eYafy5Kp4xGkBu)
+
+#### Best Practices
+
+- Only part of the card (e.g., the grip icon) is made draggable to avoid click vs drag conflicts.
+- Wrapping the entire card made it impossible to distinguish drag from click events.
+
+---
+
+## FAQ / Q\&A Notes
+
+### Job State Management
+
+- **Initial State:**
+
+  - On page load, `jobsList` is rendered with all jobs from `user.id`.
+
+  ```tsx
+  const [jobsList, setJobsList] = useState<JobType[]>([]);
+
+  useEffect(() => {
+    async function fetchAllJobs() {
+      const data = await getJobsByUser(user.id);
+
+      if (data) {
+        const jobs = JSON.parse(data) as JobType[];
+        setJobsList(jobs);
+      }
+    }
+    fetchAllJobs();
+  }, [user.id]);
+  ```
+
+- As new job cards are added via `Modal.tsx`, the function `upsertJob` pushes job card changes up from modal to card or column back to kanban for re-rendering.
+
+  - **Add/Update Logic:**
+
+  ```tsx
+  setJobsList((prev) =>
+    prev.some((j) => j.id === job.id)
+      ? prev.map((j) => (j.id === job.id ? job : j))
+      : [...prev, job],
+  );
+  ```
+
+  - **Delete Logic:**
+
+  ```tsx
+  setJobsList((prev) => prev.filter((j) => j.id !== jobIdToRemove));
+  ```
+
+  - **Update a Job by ID:**
+
+  ```tsx
+  setJobsList((prev) =>
+    prev.map((j) => (j.id === jobIdToUpdate ? { ...j, ...updatedFields } : j)),
+  );
+  ```
+
+### Modal Handling
+
+- **Opening/Closing a Modal from a Card:**
+  Only toggle modal on the card itself, not the card wrapper.
+  When modal was open, all clicks were triggering the modal to close prematurely — resolved by placing toggle logic only on `job-card` div rather than `job-card-wrapper`.
+
+- **Click vs Drag Conflict Fix:**
+  Only apply `DnD` draggable props to a specific element (like a grip icon) instead of the full card.
+
+### Formik + Modal Behaviour
+
+- Use `enableReinitialize: true` in Formik to dynamically update `initialValues` when editing a job card:
+
+  ```tsx
+  initialValues={{
+    name: job?.job_name === "empty" || !job?.job_name ? "" : job.job_name,
+    ...
+  }}
+  ```
+
+- Also handles empty strings and undefined/null uniformly.
+
+## Developer Notes
+
+- `field-sizing: content` or `field-sizing: fixed` helps auto-resize `<textarea>` elements.
+- Component `Modal.tsx` is reused for both “Add” (plus button) and “Edit” (clicking on a card).
+- Formik values are reset conditionally based on whether a job object is passed in or not.
+- Job data is passed **upward** from modal/card to Kanban board using callbacks like:
+
+  ```tsx
+  upsertJob: (job: JobType, type: string) => void;
+  ```
