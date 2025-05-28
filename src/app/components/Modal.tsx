@@ -132,6 +132,7 @@ export const Modal: React.FC<ModalProps> = ({
         <Card>
           <CardContent>
             {job ? (
+              // display this form if job is NOT null
               <form
                 action=""
                 method="post"
@@ -314,6 +315,8 @@ export const Modal: React.FC<ModalProps> = ({
                 </div>
               </form>
             ) : (
+
+              // display this form if job is null
               <form
                 action=""
                 method="post"

@@ -106,7 +106,7 @@ export const Kanban: React.FC<KanbanProps> = ({ user }) => {
   return (
     <div id="kanban" className="p-4">
       <div className="top-wrapper my-2 flex w-full flex-row items-end justify-between">
-        <h1>Hi, {user.firstName}</h1>
+        <h1>Hi, {user.firstName} {user.lastName}</h1>
         <Button
           onClick={() => {
             window.sessionStorage.removeItem("user");

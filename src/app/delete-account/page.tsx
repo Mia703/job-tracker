@@ -6,14 +6,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useFormik } from "formik";
+import { AlertCircle, Check } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 function alertType(type: string) {
@@ -23,16 +22,25 @@ function alertType(type: string) {
         <Alert variant={"destructive"} className="text-left">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            There was a problem logging in. Please try again.
+            There was a problem deleting your account. Please try again.
           </AlertDescription>
         </Alert>
       );
-    case "not exist":
+    case "exists":
       return (
         <Alert variant={"destructive"} className="text-left">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            An account with this email does not exist. Try signing up.
+            An account with this email does not exist. Please try signing up.
+          </AlertDescription>
+        </Alert>
+      );
+    case "good":
+      return (
+        <Alert className="border-green-600 text-left text-green-600">
+          <Check className="h-4 w-4" />
+          <AlertDescription className="text-green-600">
+            Your account has been deleted.
           </AlertDescription>
         </Alert>
       );
@@ -41,19 +49,18 @@ function alertType(type: string) {
   }
 }
 
-export default function Home() {
+export default function DeleteAccount() {
   const [alert, setAlert] = useState<string>("");
-  const router = useRouter();
 
   const formik = useFormik({
     initialValues: {
       email: "",
     },
     onSubmit: async (values) => {
-      if (values.email == "") {
-        setAlert("error");
+      if (values.email === " ") {
+        setAlert("default");
       } else {
-        const response = await fetch("/pages/api/auth/login", {
+        const response = await fetch("/pages/api/auth/deleteUser", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -66,11 +73,6 @@ export default function Home() {
 
         if (response.ok) {
           formik.resetForm();
-
-          // save the user's data
-          window.sessionStorage.setItem("user", data.message.user);
-
-          router.push("/pages/job-tracker");
         } else {
           console.error(data.message.message);
         }
@@ -83,7 +85,7 @@ export default function Home() {
       <main className="w-full text-center md:w-1/2 lg:w-1/3">
         <Card>
           <CardHeader>
-            <CardTitle>Login</CardTitle>
+            <CardTitle>Delete Account</CardTitle>
           </CardHeader>
           <CardContent>
             <form action="" method="post" onSubmit={formik.handleSubmit}>
@@ -100,8 +102,12 @@ export default function Home() {
                 onChange={formik.handleChange}
                 value={formik.values.email}
               />
-              <Button type="submit" className="my-6 w-full">
-                Login
+              <Button
+                type="submit"
+                variant={"destructive"}
+                className="my-4 w-full"
+              >
+                Delete Account
               </Button>
             </form>
 
@@ -110,12 +116,12 @@ export default function Home() {
           <CardFooter>
             <div className="w-full text-center">
               <small>
-                Don&apos;t have an account?{" "}
-                <Link href={"/signup"}>Sign Up</Link>{" "}
+                Already have an account? <Link href={"/"}>Login</Link>{" "}
               </small>
               <br />
               <small>
-                <Link href={"/delete-account"} className="capitalize text-red-600">Delete account</Link>
+                Don&apos;t have an account?{" "}
+                <Link href={"/signup"}>Sign Up</Link>
               </small>
             </div>
           </CardFooter>
