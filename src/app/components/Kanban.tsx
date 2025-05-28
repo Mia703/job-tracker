@@ -38,8 +38,7 @@ export const Kanban: React.FC<KanbanProps> = ({ user }) => {
     if (dragged) {
       dragged.job_status = new_job_status;
       setDraggedJob(dragged);
-    }
-    else {
+    } else {
       setDraggedJob(null);
     }
 
@@ -53,12 +52,15 @@ export const Kanban: React.FC<KanbanProps> = ({ user }) => {
 
   // every time a job is moved update the db
   useEffect(() => {
-    async function updateDraggedJob()  {
+    async function updateDraggedJob() {
       if (draggedJob) {
         // only returns error message, else null
-        const data = await updateJobStatus(draggedJob.id, draggedJob.job_status);
+        const data = await updateJobStatus(
+          draggedJob.id,
+          draggedJob.job_status,
+        );
         if (data) {
-          console.error('updatedDraggedJobStatus', data);
+          console.error("updateDraggedJobStatus", data);
         }
       }
     }
@@ -82,6 +84,24 @@ export const Kanban: React.FC<KanbanProps> = ({ user }) => {
   const getJobsByStatus = (status: JobType["job_status"]) => {
     return jobsList.filter((job) => job.job_status === status);
   };
+
+  // takes the created, updated, or deleted job from Modal
+  // and passes it up to Kanban to updated jobsList
+  function upsertJob(job: JobType, type: string) {
+    if (type === "insert") {
+      setJobsList(
+        (prev) =>
+          prev.some((j) => j.id === job.id)
+            ? prev.map((j) => (j.id === job.id ? job : j)) // update
+            : [...prev, job], // add
+      );
+    } else if (type === "delete") {
+      setJobsList((prev) => prev.filter((j) => j.id !== job.id));
+    } else if (type === "update") {
+      setJobsList((prev) => prev.map((j) => (j.id === job.id ? job : j)));
+    }
+    // else, do nothing
+  }
 
   return (
     <div id="kanban" className="p-4">
@@ -107,6 +127,7 @@ export const Kanban: React.FC<KanbanProps> = ({ user }) => {
               title="Wish List"
               slug="wish-list"
               jobs={getJobsByStatus("wish-list")}
+              upsertJob={upsertJob}
             />
             <Column
               key={2}
@@ -114,6 +135,7 @@ export const Kanban: React.FC<KanbanProps> = ({ user }) => {
               title="Applied"
               slug="applied"
               jobs={getJobsByStatus("applied")}
+              upsertJob={upsertJob}
             />
             <Column
               key={3}
@@ -121,6 +143,7 @@ export const Kanban: React.FC<KanbanProps> = ({ user }) => {
               title="Rejected"
               slug="rejected"
               jobs={getJobsByStatus("rejected")}
+              upsertJob={upsertJob}
             />
             <Column
               key={4}
@@ -128,6 +151,7 @@ export const Kanban: React.FC<KanbanProps> = ({ user }) => {
               title="Offered"
               slug="offered"
               jobs={getJobsByStatus("offered")}
+              upsertJob={upsertJob}
             />
           </div>
         </DndContext>

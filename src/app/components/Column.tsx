@@ -11,6 +11,7 @@ interface ColumnProps {
   title: string;
   slug: string;
   jobs: JobType[];
+  upsertJob: (job: JobType, type: string) => void;
 }
 
 export const Column: React.FC<ColumnProps> = ({
@@ -18,6 +19,7 @@ export const Column: React.FC<ColumnProps> = ({
   title,
   slug,
   jobs,
+  upsertJob,
 }) => {
   const [displayModal, setDisplayModal] = useState<boolean>(false);
 
@@ -49,15 +51,24 @@ export const Column: React.FC<ColumnProps> = ({
 
       <div className="col-body card-wrapper">
         {jobs.map((job, index) => {
-          return <JobCard job={job} user_id={user_id} key={index} />;
+          return (
+            <JobCard
+              job={job}
+              user_id={user_id}
+              key={index}
+              upsertJob={upsertJob}
+            />
+          );
         })}
       </div>
 
       {displayModal && (
         <Modal
           job={null}
+          status={slug}
           user_id={user_id}
           onClose={() => setDisplayModal(!displayModal)}
+          upsertJob={upsertJob}
         />
       )}
     </div>

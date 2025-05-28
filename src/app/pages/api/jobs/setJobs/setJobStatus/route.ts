@@ -9,7 +9,7 @@ export async function POST(request: Request) {
 
     if (!job_id || !job_status) {
       return NextResponse.json(
-        { message: "setJob: Job id and status are required" },
+        { message: "setJob: Job id and job status are required" },
         { status: 400 },
       );
     }

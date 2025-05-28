@@ -6,7 +6,7 @@ const xata = getXataClient();
 export async function POST(request: Request) {
   try {
     const {
-      id,
+      user_id,
       job_status,
       job_name,
       job_company,
@@ -20,11 +20,11 @@ export async function POST(request: Request) {
       job_offer_accepted_date,
     } = await request.json();
 
-    // !id will return true if the string is empty ('')
+    // !user_id will return true if the string is empty ('')
     // some job card inputs may or may not be empty
     // therefore, only check for null or undefined
     if (
-      id == null ||
+      user_id == null ||
       job_status == null ||
       job_name == null ||
       job_company == null ||
@@ -38,12 +38,13 @@ export async function POST(request: Request) {
       job_offer_accepted_date == null
     ) {
       return NextResponse.json(
-        { message: `updateJob: All properties are required` },
+        { message: `createJob: All properties are required` },
         { status: 404 },
       );
     }
 
-    const updateJob = await xata.db.Jobs.update(id, {
+    const createJob = await xata.db.Jobs.create({
+      user: user_id,
       job_status,
       job_name,
       job_company,
@@ -57,9 +58,9 @@ export async function POST(request: Request) {
       job_offer_accepted_date,
     });
 
-    if (!updateJob) {
+    if (!createJob) {
       return NextResponse.json(
-        { message: `updateJob: Unable to update job of id:${id}` },
+        { message: `createJob: Unable to create job for user_id:${user_id}` },
         { status: 404 },
       );
     }
@@ -67,16 +68,16 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         message: {
-          message: `updateJob: Successfully updated job of id:${id}`,
-          job: JSON.stringify(updateJob),
+          message: `createJob: Created a job for user_id:${user_id}`,
+          job: JSON.stringify(createJob),
         },
       },
       { status: 200 },
     );
   } catch (error) {
-    console.error("updateJob: Internal server error", error);
+    console.error("createJob: Internal server error", error);
     return NextResponse.json(
-      { message: "updateJob: Internal server error" },
+      { message: "createJob: Internal server error" },
       { status: 500 },
     );
   }
