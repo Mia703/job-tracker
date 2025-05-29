@@ -32,7 +32,7 @@ export const Column: React.FC<ColumnProps> = ({
       ref={setNodeRef}
       className="column col-span-4 w-full rounded-md border-2 bg-white p-2 shadow-md md:col-span-1"
     >
-      <div className="col-header">
+      <div className="col-header sticky top-0 border-b-2 border-slate-400 bg-white p-2">
         <div className="content-wrapper text-center">
           <h2 className="col-header font-bold capitalize">{title}</h2>
           <small className="totals">{jobs.length} Jobs</small>
@@ -49,7 +49,7 @@ export const Column: React.FC<ColumnProps> = ({
         </div>
       </div>
 
-      <div className="col-body card-wrapper">
+      <div className="col-body card-wrapper p-1">
         {jobs.map((job, index) => {
           return (
             <JobCard
