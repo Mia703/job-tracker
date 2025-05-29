@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Job as JobType } from "../types/Job";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useFormik } from "formik";
 import { createJob, deleteJob, updateJob } from "../utils/tasks";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle, Check } from "lucide-react";
 
 interface ModalProps {
   job: JobType | null;
@@ -16,6 +18,40 @@ interface ModalProps {
   upsertJob: (job: JobType, type: string) => void;
 }
 
+function alertType(type: string) {
+  switch (type) {
+    case "error":
+      return (
+        <Alert variant={"destructive"} className="border-red-500">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            There was a problem saving the job card. Please try again.
+          </AlertDescription>
+        </Alert>
+      );
+    case "good":
+      return (
+        <Alert className="border-green-600 text-left text-green-600">
+          <Check className="h-4 w-4" />
+          <AlertDescription className="text-green-600">
+            Job card successfully created.
+          </AlertDescription>
+        </Alert>
+      );
+    case "updated":
+      return (
+        <Alert className="border-green-600 text-left text-green-600">
+          <Check className="h-4 w-4" />
+          <AlertDescription className="text-green-600">
+            Job card successfully updated.
+          </AlertDescription>
+        </Alert>
+      );
+    default:
+      return <div></div>;
+  }
+}
+
 export const Modal: React.FC<ModalProps> = ({
   job,
   status,
@@ -23,6 +59,8 @@ export const Modal: React.FC<ModalProps> = ({
   onClose,
   upsertJob,
 }) => {
+  const [displayAlert, setDisplayAlert] = useState<string>("");
+
   const formik_withOutJob = useFormik({
     initialValues: {
       name: "",
@@ -37,24 +75,31 @@ export const Modal: React.FC<ModalProps> = ({
       description: "",
     },
     onSubmit: async (values) => {
-      const data = await createJob(
-        user_id,
-        status,
-        values.name,
-        values.company,
-        values.salary,
-        values.location,
-        values.postURL,
-        values.description,
-        values.applicationDate,
-        values.interviewDate,
-        values.offerReceivedDate,
-        values.offerAcceptedDate,
-      );
+      if (values.name == " ") {
+        setDisplayAlert("error");
+      } else {
+        const data = await createJob(
+          user_id,
+          status,
+          values.name,
+          values.company,
+          values.salary,
+          values.location,
+          values.postURL,
+          values.description,
+          values.applicationDate,
+          values.interviewDate,
+          values.offerReceivedDate,
+          values.offerAcceptedDate,
+        );
 
-      if (data) {
-        const newJob = JSON.parse(data) as JobType;
-        upsertJob(newJob, "insert");
+        if (data) {
+          const newJob = JSON.parse(data.message.job) as JobType;
+          upsertJob(newJob, "insert");
+          setDisplayAlert(data.message.type);
+        } else {
+          setDisplayAlert("error");
+        }
       }
     },
   });
@@ -117,8 +162,11 @@ export const Modal: React.FC<ModalProps> = ({
         );
 
         if (data) {
-          const updatedJob = JSON.parse(data) as JobType;
+          const updatedJob = JSON.parse(data.message.job) as JobType;
           upsertJob(updatedJob, "update");
+          setDisplayAlert(data.message.type);
+        } else {
+          setDisplayAlert("error");
         }
       } else {
         console.error("updateJob: Selected job is null");
@@ -292,6 +340,10 @@ export const Modal: React.FC<ModalProps> = ({
                   />
                 </div>
 
+                <div className="alert-wrapper my-4">
+                  {alertType(displayAlert)}
+                </div>
+
                 <div className="button-wrapper mt-6 grid grid-cols-2 gap-2">
                   <Button
                     type="button"
@@ -315,7 +367,6 @@ export const Modal: React.FC<ModalProps> = ({
                 </div>
               </form>
             ) : (
-
               // display this form if job is null
               <form
                 action=""
@@ -477,10 +528,24 @@ export const Modal: React.FC<ModalProps> = ({
                   />
                 </div>
 
-                <div className="button-wrapper mt-6">
-                  <Button type="submit" className="update-btn w-full">
-                    Update
-                  </Button>
+                <div className="alert-wrapper my-4">
+                  {alertType(displayAlert)}
+                </div>
+
+                <div className="button-wrapper mt-4">
+                  {displayAlert == "good" ? (
+                    <Button
+                      type="submit"
+                      className="update-btn w-full"
+                      disabled
+                    >
+                      Create Job
+                    </Button>
+                  ) : (
+                    <Button type="submit" className="update-btn w-full">
+                      Create Job
+                    </Button>
+                  )}
                 </div>
               </form>
             )}

@@ -19,7 +19,7 @@ function alertType(type: string) {
   switch (type) {
     case "error":
       return (
-        <Alert variant={"destructive"} className="text-left">
+        <Alert variant={"destructive"} className="border-red-500 text-left">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             There was a problem signing up. Please try again.

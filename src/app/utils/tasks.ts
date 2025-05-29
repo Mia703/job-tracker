@@ -74,9 +74,9 @@ export async function updateJob(
 
   const data = await response.json();
   if (response.ok) {
-    return data.message.job;
+    return data;
   }
-  console.error('updateJob', data.message);
+  console.error("updateJob", data.message.message);
   return null;
 }
 
@@ -117,9 +117,9 @@ export async function createJob(
 
   const data = await response.json();
   if (response.ok) {
-    return data.message.job;
+    return data;
   }
-  console.error("createJob", data.message);
+  console.error("createJob", data.message.message);
   return null;
 }
 
@@ -138,6 +138,6 @@ export async function deleteJob(job_id: string) {
   if (response.ok) {
     return data.message.job;
   }
-  console.error("deleteJob", data.message)
+  console.error("deleteJob", data.message);
   return null;
 }

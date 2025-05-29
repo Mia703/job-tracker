@@ -38,7 +38,12 @@ export async function POST(request: Request) {
       job_offer_accepted_date == null
     ) {
       return NextResponse.json(
-        { message: `updateJob: All properties are required` },
+        {
+          message: {
+            message: `updateJob: All properties are required`,
+            type: "error",
+          },
+        },
         { status: 404 },
       );
     }
@@ -59,7 +64,12 @@ export async function POST(request: Request) {
 
     if (!updateJob) {
       return NextResponse.json(
-        { message: `updateJob: Unable to update job of id:${id}` },
+        {
+          message: {
+            message: `updateJob: Unable to update job of id:${id}`,
+            type: "error",
+          },
+        },
         { status: 404 },
       );
     }
@@ -68,6 +78,7 @@ export async function POST(request: Request) {
       {
         message: {
           message: `updateJob: Successfully updated job of id:${id}`,
+          type: "updated",
           job: JSON.stringify(updateJob),
         },
       },
@@ -76,7 +87,9 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("updateJob: Internal server error", error);
     return NextResponse.json(
-      { message: "updateJob: Internal server error" },
+      {
+        message: { message: "updateJob: Internal server error", type: "error" },
+      },
       { status: 500 },
     );
   }

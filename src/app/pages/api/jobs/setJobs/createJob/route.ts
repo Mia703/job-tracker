@@ -38,7 +38,12 @@ export async function POST(request: Request) {
       job_offer_accepted_date == null
     ) {
       return NextResponse.json(
-        { message: `createJob: All properties are required` },
+        {
+          message: {
+            message: `createJob: All properties are required`,
+            type: "error",
+          },
+        },
         { status: 404 },
       );
     }
@@ -60,7 +65,12 @@ export async function POST(request: Request) {
 
     if (!createJob) {
       return NextResponse.json(
-        { message: `createJob: Unable to create job for user_id:${user_id}` },
+        {
+          message: {
+            message: `createJob: Unable to create job for user_id:${user_id}`,
+            type: "error",
+          },
+        },
         { status: 404 },
       );
     }
@@ -69,6 +79,7 @@ export async function POST(request: Request) {
       {
         message: {
           message: `createJob: Created a job for user_id:${user_id}`,
+          type: "good",
           job: JSON.stringify(createJob),
         },
       },
@@ -77,7 +88,9 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("createJob: Internal server error", error);
     return NextResponse.json(
-      { message: "createJob: Internal server error" },
+      {
+        message: { message: "createJob: Internal server error", type: "error" },
+      },
       { status: 500 },
     );
   }
