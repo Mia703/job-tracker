@@ -25,7 +25,7 @@ export const Card: React.FC<JobCardProps> = ({ job, user_id, upsertJob }) => {
 
   return (
     <div
-      className="job-card-wrapper my-2 rounded-sm border-2 border-slate-300 bg-white p-4"
+      className="job-card-wrapper my-2 rounded-sm border-2 border-slate-300 bg-slate-50 p-4"
       style={style}
     >
       <div

@@ -29,6 +29,15 @@ function alertType(type: string) {
           </AlertDescription>
         </Alert>
       );
+    case "delError":
+      return (
+        <Alert variant={"destructive"} className="border-red-500">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            There was a problem deleting the job card. Please try again.
+          </AlertDescription>
+        </Alert>
+      );
     case "good":
       return (
         <Alert className="border-green-600 text-left text-green-600">
@@ -207,7 +216,7 @@ export const Modal: React.FC<ModalProps> = ({
                   </Button>
                 </div>
 
-                <div className="wrapper grid grid-cols-2 gap-4">
+                <div className="wrapper grid grid-cols-2 gap-4 lg:grid-cols-3">
                   <div className="left-wrapper col-span-1">
                     <div className="input-wrapper mb-4">
                       <Label htmlFor="company" className="my-2">
@@ -266,7 +275,7 @@ export const Modal: React.FC<ModalProps> = ({
                     </div>
                   </div>
 
-                  <div className="right-wrapper col-span-1">
+                  <div className="centre-wrapper col-span-1">
                     <div className="input-wrapper mb-4">
                       <Label htmlFor="applicationDate" className="my-2">
                         Application Date
@@ -323,21 +332,23 @@ export const Modal: React.FC<ModalProps> = ({
                       />
                     </div>
                   </div>
-                </div>
 
-                <div className="input-wrapper mb-4">
-                  <Label htmlFor="description" className="my-2">
-                    Job Description
-                  </Label>
-                  <Textarea
-                    name="description"
-                    id="description"
-                    cols={30}
-                    className="field-sizing-fixed resize-y overflow-y-scroll"
-                    onBlur={formik_withJob.handleBlur}
-                    onChange={formik_withJob.handleChange}
-                    value={formik_withJob.values.description}
-                  />
+                  <div className="right-wrapper col-span-2 lg:col-span-1">
+                    <div className="input-wrapper lg:h-full">
+                      <Label htmlFor="description" className="my-2">
+                        Job Description
+                      </Label>
+                      <Textarea
+                        name="description"
+                        id="description"
+                        cols={30}
+                        className="field-sizing-fixed resize-y overflow-y-scroll lg:h-[90%]"
+                        onBlur={formik_withJob.handleBlur}
+                        onChange={formik_withJob.handleChange}
+                        value={formik_withJob.values.description}
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="alert-wrapper my-4">
@@ -354,8 +365,13 @@ export const Modal: React.FC<ModalProps> = ({
                       const data = await deleteJob(job.id);
 
                       if (data) {
-                        const removedJob = JSON.parse(data) as JobType;
+                        const removedJob = JSON.parse(
+                          data.message.job,
+                        ) as JobType;
                         upsertJob(removedJob, "delete");
+                        onClose();
+                      } else {
+                        setDisplayAlert(data.message.type);
                       }
                     }}
                   >

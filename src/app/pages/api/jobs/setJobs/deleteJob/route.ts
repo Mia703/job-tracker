@@ -8,7 +8,12 @@ export async function POST(request: Request) {
 
     if (!job_id) {
       return NextResponse.json(
-        { message: "deleteJob: Job id is required" },
+        {
+          message: {
+            message: "deleteJob: Job id is required",
+            type: "delError",
+          },
+        },
         { status: 404 },
       );
     }
@@ -17,7 +22,12 @@ export async function POST(request: Request) {
 
     if (!deleteJob) {
       return NextResponse.json(
-        { message: `deleteJob: Unable to delete job of id:${job_id}` },
+        {
+          message: {
+            message: `deleteJob: Unable to delete job of id:${job_id}`,
+            type: "delError",
+          },
+        },
         { status: 404 },
       );
     }
@@ -26,6 +36,7 @@ export async function POST(request: Request) {
       {
         message: {
           message: `deleteJob: Deleted job of id:${job_id}`,
+          type: "good",
           job: JSON.stringify(deleteJob),
         },
       },
@@ -34,7 +45,12 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("deleteJob: Internal server error", error);
     return NextResponse.json(
-      { message: "deleteJob: Internal server error" },
+      {
+        message: {
+          message: "deleteJob: Internal server error",
+          type: "delError",
+        },
+      },
       { status: 500 },
     );
   }

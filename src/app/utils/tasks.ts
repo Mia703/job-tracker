@@ -136,8 +136,8 @@ export async function deleteJob(job_id: string) {
 
   const data = await response.json();
   if (response.ok) {
-    return data.message.job;
+    return data;
   }
-  console.error("deleteJob", data.message);
+  console.error("deleteJob", data.message.message);
   return null;
 }
