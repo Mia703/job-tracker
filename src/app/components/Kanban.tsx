@@ -88,17 +88,17 @@ export const Kanban: React.FC<KanbanProps> = ({ user }) => {
   // takes the created, updated, or deleted job from Modal
   // and passes it up to Kanban to updated jobsList
   function upsertJob(job: JobType, type: string) {
-    if (type === "insert") {
+    if (type === "insert" || type === "update") {
       setJobsList(
         (prev) =>
           prev.some((j) => j.id === job.id)
             ? prev.map((j) => (j.id === job.id ? job : j)) // update
-            : [...prev, job], // add
+            : [job, ...prev], // add
       );
-    } else if (type === "delete") {
+    } 
+    
+    if (type === "delete") {
       setJobsList((prev) => prev.filter((j) => j.id !== job.id));
-    } else if (type === "update") {
-      setJobsList((prev) => prev.map((j) => (j.id === job.id ? job : j)));
     }
     // else, do nothing
   }

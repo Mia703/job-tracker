@@ -16,7 +16,9 @@ export async function POST(request: Request) {
 
     const jobs = await xata.db.Jobs.filter({
       "user.id": user_id,
-    }).getAll();
+    })
+      .sort("xata.createdAt", "desc") // newest to oldest
+      .getAll();
 
     if (!jobs) {
       return NextResponse.json(
