@@ -1,138 +1,157 @@
 # Job Tracker
 
-A Kanban-based job tracking app that helps users manage job applications across various stages.
+**Job Tracker** is a Kanban-style job application management tools designed to help users visually organise job opportunities across four statuses: **Wish List, Applied, Rejected,** and **Offered**.
 
-## Dependencies
+Each job card includes position details (e.g., position, company, description, salary, URL) and associated timeline events (e.g., applied, interviewed, offered, accepted). Users can add, update, delete, and reorder job cards as needed.
 
-### Front-end
+Inspired by [Hunter.co](https://huntr.co/), this app provides a streamlined and structured workflow for job seekers.
 
-- **React.js** v19
-- **ShadCDN UI Library**
+## Features
 
-  - Installed using `--legacy-peer-deps` for React 19 compatibility
-  - Icons: Lucide for React v0.511.0
-  - Docs: [shadcn.com for React 19](https://ui.shadcn.com/docs/react-19)
+- User account management: sign up, login, delete account.
+- Create, read, update, and delete job cards.
+- Drag and drop functionality across status columns.
+- Persistent data storage with Xata.io Lite.
 
-### Back-end
+## Technologies Used
 
-- **Next.js** (App Router) with **TypeScript**
-- **TailwindCSS** v15
+- Frontend: React 19, TailwindCSS, ShadCN UI.
+- Backend: Next.js (App Router), TypeScript.
+- Database: Xata.io Lite.
+- Validation: Formik.
+- Deployment: Vercel.
 
-  - Tailwind Prettier Plugin: v0.6.11
+## Installation
 
-### Database
+To run this project locally:
 
-- **Xata.io Lite** v0.30.1
+1. Clone and set up the repository:
 
-### Form Handling
+```bash
+  git clone https://github.com/Mia703/job-tracker.git
+  cd job-tracker
+```
 
-- **Formik.org** v2.4.6
+2. Install dependencies:
 
-  - `enableReinitialize: true` is set to allow Formik to refresh when `initialValues` change
+```bash
+  npm install --legacy-peer-deps
+```
 
----
+3. Set environment variables:
 
-## Key Architecture Notes
+- Create a `.env` file in the root.
+- Add you Xata API key:
 
-### State Management
+```ini
+  XATA_API_KEY=your_key_here
+```
 
-- Used `UserContext` to share user info globally across pages and components.
-- Context is **in-memory only** and does not persist on refresh.
-- Workaround: Save user credentials to `sessionStorage` and retrieve on mount to persist authentication.
+4. Run the development server:
 
-### Drag and Drop
+```bash
+  npm run dev
+```
 
-- **DnD Kit** is used for drag & drop functionality.
+For detailed setup, refer to [Xata's Next.js Guide](https://lite.xata.io/docs/getting-started/nextjs).
 
-  - Docs: [https://docs.dndkit.com/introduction/getting-started](https://docs.dndkit.com/introduction/getting-started)
-  - YouTube Tutorial: [https://www.youtube.com/watch?v=DVqVQwg_6_4\&list=PLDP6TvgDVbW1fI3EXn8eYafy5Kp4xGkBu](https://www.youtube.com/watch?v=DVqVQwg_6_4&list=PLDP6TvgDVbW1fI3EXn8eYafy5Kp4xGkBu)
+## Project Structure
 
-#### Best Practices
+```bash
+/src
+  /app
+    /components         → Kanban components
+    /context            → UserContext for authentication
+    /delete-account     → Account deletion page
+    /signup             → User registration page
+  /components/ui        → ShadCN UI components
+  /pages
+    /api                → API route handlers
+    /job-tracker        → Main Kanban interface
+  /types                → TypeScript types (User, Job)
+  /utils/tasks.ts       → Async DB operations (CRUD)
+```
 
-- Only part of the card (e.g., the grip icon) is made draggable to avoid click vs drag conflicts.
-- Wrapping the entire card made it impossible to distinguish drag from click events.
+## Developer Notes and Implementation Details
 
----
+### Dependencies
 
-## FAQ / Q\&A Notes
+- ShadCN UI (React 19 compatible):
+  - Installed with --legacy-peer-deps
+  - Icons: Lucide v0.511.0
+  - Docs: ShadCN React 19 Docs
+- TailwindCSS: v15, with Prettier plugin v0.6.11
+- Formik: v2.4.6, with enableReinitialize: true
+- Xata.io Lite: v0.30.1
+- DnD Kit: for drag-and-drop ([Docs](https://dndkit.com/))
 
-### Job State Management
+### Architecture Notes
 
-- **Initial State:**
+#### State Management
 
-  - On page load, `jobsList` is rendered with all jobs from `user.id`.
+- `UserContext` is used for global auth state.
+- Data is not persisted across page refreshes.
+- Workaround: store user credentials in `sessionStorage`.
 
-  ```tsx
-  const [jobsList, setJobsList] = useState<JobType[]>([]);
+#### Drag and Drop
 
-  useEffect(() => {
-    async function fetchAllJobs() {
-      const data = await getJobsByUser(user.id);
+- Only a sub-element (e.g., grip icon) is draggable to prevent click vs drag event conflicts.
 
-      if (data) {
-        const jobs = JSON.parse(data) as JobType[];
-        setJobsList(jobs);
-      }
-    }
-    fetchAllJobs();
-  }, [user.id]);
-  ```
+#### Job State Logic
 
-- As new job cards are added via `Modal.tsx`, the function `upsertJob` pushes job card changes up from modal to card or column back to kanban for re-rendering.
+- Job cards are managed in a `jobList` state array.
+- CRUD operations update this list directly:
 
-  - **Add/Update Logic:**
+```tsx
+setJobsList((prev) =>
+  prev.some((j) => j.id === job.id)
+    ? prev.map((j) => (j.id === job.id ? job : j))
+    : [...prev, job],
+);
+```
 
-  ```tsx
-  setJobsList((prev) =>
-    prev.some((j) => j.id === job.id)
-      ? prev.map((j) => (j.id === job.id ? job : j))
-      : [...prev, job],
-  );
-  ```
+- Deletion:
 
-  - **Delete Logic:**
+```tsx
+setJobsList((prev) => prev.filter((j) => j.id !== jobIdToRemove));
+```
 
-  ```tsx
-  setJobsList((prev) => prev.filter((j) => j.id !== jobIdToRemove));
-  ```
+- Update:
 
-  - **Update a Job by ID:**
+```tsx
+setJobsList((prev) =>
+  prev.map((j) => (j.id === jobIdToUpdate ? { ...j, ...updatedFields } : j)),
+);
+```
 
-  ```tsx
-  setJobsList((prev) =>
-    prev.map((j) => (j.id === jobIdToUpdate ? { ...j, ...updatedFields } : j)),
-  );
-  ```
+#### Modal + Formik
 
-### Modal Handling
+- Modal is used for both add and edit job card actions.
+- Use `enableReinitialize: true` for dynamic `initialValues`.
+- Formik values adapt to job data or default to empty strings:
 
-- **Opening/Closing a Modal from a Card:**
-  Only toggle modal on the card itself, not the card wrapper.
-  When modal was open, all clicks were triggering the modal to close prematurely — resolved by placing toggle logic only on `job-card` div rather than `job-card-wrapper`.
+```tsx
+initialValues={{
+  name: job?.job_name === "empty" || !job?.job_name ? "" : job.job_name,
+  ...
+}}
+```
 
-- **Click vs Drag Conflict Fix:**
-  Only apply `DnD` draggable props to a specific element (like a grip icon) instead of the full card.
+#### UX Notes
 
-### Formik + Modal Behaviour
+- Place modal toggle logic only on the job card (not the wrapper).
+- Job data is lifted up from `Modal.tsx` using callbacks:
 
-- Use `enableReinitialize: true` in Formik to dynamically update `initialValues` when editing a job card:
+```tsx
+upsertJob: (job: JobType, type: string) => void;
+```
 
-  ```tsx
-  initialValues={{
-    name: job?.job_name === "empty" || !job?.job_name ? "" : job.job_name,
-    ...
-  }}
-  ```
+- Use `field-sizing: content` for auto-resizing `<textarea>` inputs.
 
-- Also handles empty strings and undefined/null uniformly.
+## License
 
-## Developer Notes
+Job Tracker © 2025 by Amya moore is licensed under CC BY-NC 4.0. To view a copy of this license, visit <https://creativecommons.org/licenses/by-nc/4.0/>
 
-- `field-sizing: content` or `field-sizing: fixed` helps auto-resize `<textarea>` elements.
-- Component `Modal.tsx` is reused for both “Add” (plus button) and “Edit” (clicking on a card).
-- Formik values are reset conditionally based on whether a job object is passed in or not.
-- Job data is passed **upward** from modal/card to Kanban board using callbacks like:
+## Live Demo
 
-  ```tsx
-  upsertJob: (job: JobType, type: string) => void;
-  ```
+Visit the deployed site: [kanban-job-tracker.verce.app](https://kanban-job-tracker.vercel.app/)
