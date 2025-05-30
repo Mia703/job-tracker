@@ -4,7 +4,7 @@
 
 Each job card includes position details (e.g., position, company, description, salary, URL) and associated timeline events (e.g., applied, interviewed, offered, accepted). Users can add, update, delete, and reorder job cards as needed.
 
-Inspired by [Hunter.co](https://huntr.co/), this app provides a streamlined and structured workflow for job seekers.
+Inspired by [Huntr.co](https://huntr.co/), this app provides a streamlined and structured workflow for job seekers.
 
 ## Features
 
