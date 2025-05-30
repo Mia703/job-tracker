@@ -97,7 +97,7 @@ export default function SignUp() {
           </CardHeader>
           <CardContent>
             <form action="" method="post" onSubmit={formik.handleSubmit}>
-              <div className="wrapper flex flex-row justify-between gap-4">
+              <div className="wrapper grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="firstName" className="mb-2">
                     First Name <span className="text-red-600">*</span>
