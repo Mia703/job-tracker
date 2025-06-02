@@ -411,7 +411,7 @@ export const Modal: React.FC<ModalProps> = ({
                   </Button>
                 </div>
 
-                <div className="wrapper grid grid-cols-2 gap-4">
+                <div className="wrapper grid grid-cols-2 gap-4 lg:grid-cols-3">
                   <div className="left-wrapper col-span-1">
                     <div className="input-wrapper mb-4">
                       <Label htmlFor="company" className="my-2">
@@ -470,7 +470,7 @@ export const Modal: React.FC<ModalProps> = ({
                     </div>
                   </div>
 
-                  <div className="right-wrapper col-span-1">
+                  <div className="centre-wrapper col-span-1">
                     <div className="input-wrapper mb-4">
                       <Label htmlFor="applicationDate" className="my-2">
                         Application Date
@@ -527,21 +527,23 @@ export const Modal: React.FC<ModalProps> = ({
                       />
                     </div>
                   </div>
-                </div>
 
-                <div className="input-wrapper mb-4">
-                  <Label htmlFor="description" className="my-2">
-                    Job Description
-                  </Label>
-                  <Textarea
-                    name="description"
-                    id="description"
-                    cols={30}
-                    className="field-sizing-fixed resize-y overflow-y-scroll"
-                    onBlur={formik_withOutJob.handleBlur}
-                    onChange={formik_withOutJob.handleChange}
-                    value={formik_withOutJob.values.description}
-                  />
+                  <div className="right-wrapper col-span-2 lg:col-span-1">
+                    <div className="input-wrapper lg:h-full">
+                      <Label htmlFor="description" className="my-2">
+                        Job Description
+                      </Label>
+                      <Textarea
+                        name="description"
+                        id="description"
+                        cols={30}
+                        className="field-sizing-fixed resize-y overflow-y-scroll lg:h-[90%]"
+                        onBlur={formik_withOutJob.handleBlur}
+                        onChange={formik_withOutJob.handleChange}
+                        value={formik_withOutJob.values.description}
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="alert-wrapper my-4">
