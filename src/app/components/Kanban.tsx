@@ -8,6 +8,7 @@ import { Column } from "./Column";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { Job as JobType } from "../types/Job";
 import { getJobsByUser, updateJobStatus } from "../utils/tasks";
+import { Input } from "@/components/ui/input";
 
 interface KanbanProps {
   user: User;
@@ -16,6 +17,7 @@ interface KanbanProps {
 export const Kanban: React.FC<KanbanProps> = ({ user }) => {
   const { setUser } = useUser();
   const [jobsList, setJobsList] = useState<JobType[]>([]);
+  const [jobsListBackup, setJobsListBackup] = useState<JobType[]>([]);
   const [draggedJob, setDraggedJob] = useState<JobType | null>(null);
   const router = useRouter();
 
@@ -74,7 +76,8 @@ export const Kanban: React.FC<KanbanProps> = ({ user }) => {
 
       if (data) {
         const jobs = JSON.parse(data) as JobType[];
-        setJobsList(jobs);
+        setJobsList(jobs); // jobsList that is also used for searching
+        setJobsListBackup(jobs); // backup jobs list
       }
     }
     fetchAllJobs();
@@ -83,6 +86,27 @@ export const Kanban: React.FC<KanbanProps> = ({ user }) => {
   // filters all jobs based on job status
   const getJobsByStatus = (status: JobType["job_status"]) => {
     return jobsList.filter((job) => job.job_status === status);
+  };
+
+  // search jobs based on input
+  const handleSearch = (e: { target: { value: string } }) => {
+    const input = e.target.value.toLowerCase();
+
+    const searchJobsList = jobsList.filter((job) => {
+      return (
+        job.job_name.toLowerCase().includes(input) ||
+        job.job_company.toLowerCase().includes(input)
+      );
+    });
+
+    // if search input is empty, restore original jobs list
+    if (input === "") {
+      setJobsList(jobsListBackup);
+    }
+    // else display search results
+    else {
+      setJobsList(searchJobsList);
+    }
   };
 
   // takes the created, updated, or deleted job from Modal
@@ -95,8 +119,8 @@ export const Kanban: React.FC<KanbanProps> = ({ user }) => {
             ? prev.map((j) => (j.id === job.id ? job : j)) // update
             : [job, ...prev], // add
       );
-    } 
-    
+    }
+
     if (type === "delete") {
       setJobsList((prev) => prev.filter((j) => j.id !== job.id));
     }
@@ -105,8 +129,22 @@ export const Kanban: React.FC<KanbanProps> = ({ user }) => {
 
   return (
     <div id="kanban" className="p-4">
-      <div className="top-wrapper my-2 flex w-full flex-row items-end justify-between">
-        <h1>Hi, {user.firstName} {user.lastName}</h1>
+      <div className="top-wrapper my-2 w-full md:flex md:flex-row md:items-end md:justify-between">
+        <h1>
+          Hi, {user.firstName} {user.lastName}
+        </h1>
+        <div className="form-wrapper">
+          <form action="" method="post">
+            <Input
+              type="search"
+              name="search-mobile"
+              id="search-mobile"
+              placeholder="Search for a Position or Company"
+              className="my-4 w-full md:my-0 md:min-w-[25rem] lg:min-w-[40rem] xl:min-w-[60rem]"
+              onChange={handleSearch}
+            />
+          </form>
+        </div>
         <Button
           onClick={() => {
             window.sessionStorage.removeItem("user");
